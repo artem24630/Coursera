@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>EShop application</title>
+
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+
+<header th:replace="fragments/header :: header"></header>
+
+<body>
+
+<h1>Course table</h1>
+
+<form>
+    <label for="titlePrefix" class="inline">Filter by title</label>
+    <input type="text" id="titlePrefix" class="inline" name="titlePrefix" th:value="${param.titlePrefix}"/>
+    <button>Apply</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <div>
+        <a th:href="@{course/new}">New course</a>
+    </div>
+    <tr th:each="course : ${courses}">
+        <td th:text="${course.id}">1</td>
+        <td>
+            <a th:text="${course.title}" th:href="@{/course/{id}(id = ${course.id})}">Course name</a>
+        </td>
+        <td th:text="${course.author}">Course author</td>
+        <td>
+            <form th:method="delete" th:action="@{/course/{id}(id = ${course.id})}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+
+</html>
