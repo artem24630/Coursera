@@ -32,13 +32,13 @@ public class LessonController {
             return "lesson_form";
         }
         lessonDatabaseManager.save(lesson);
-        return "redirect:/course";
+        return "redirect:/course/" + lesson.getCourseId();
     }
 
     @GetMapping("/{id}")
     public String lessonForm(Model model, @PathVariable("id") Long id) {
         model.addAttribute("lesson", lessonDatabaseManager.findById(id)
-                .map(l ->  new LessonDto(l.getId(), l.getTitle(), l.getText(), l.getCourse().getId())));
+                .map(l ->  new LessonDto(l.getId(), l.getTitle(), l.getText(), l.getCourse().getId())).orElseThrow(NotFoundException::new));
         return "lesson_form";
     }
 

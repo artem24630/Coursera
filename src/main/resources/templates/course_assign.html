@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign to course</title>
+</head>
+<header th:replace="fragments/header :: header"></header>
+
+<body>
+
+<h1>Assign course to user</h1>
+
+<form th:method="post" th:action="@{/course/{courseId}/assign(courseId = ${courseId})}">
+
+  <div>
+    <label for="userId">User to assign</label>
+    <select id="userId" name="userId" >
+      <option th:each="user : ${users}"
+              th:value="${user.id}"
+              th:text="${user.username}">Username</option>
+    </select>
+  </div>
+
+  <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>
+
+</body>
+</html>

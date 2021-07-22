@@ -37,7 +37,7 @@
         </div>
     </form>
 
-    <div>
+    <div th:unless="${lessons == null}">
         <div>
             <a th:href="@{/lesson/new(course_id = ${course.id})}">New lesson</a>
         </div>
@@ -67,6 +67,35 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div th:unless="${users == null}">
+        <div>Users assigned to this course</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:unless="${users.empty}" th:each="user : ${users}">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.username}">username</td>
+                <td>
+                    <form th:method="delete"
+                          th:action="@{/course/{id}/unassign(id = ${course.id}, userId= ${user.id})}">
+                        <button type="submit">Unassign</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${users.empty}">
+                <td colspan="4">No data</td>
+            </tr>
+            </tbody>
+        </table>
+
     </div>
 </div>
 

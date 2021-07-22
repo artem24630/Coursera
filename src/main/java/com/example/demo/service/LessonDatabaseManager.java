@@ -22,7 +22,9 @@ public class LessonDatabaseManager {
         this.lessonRepository = lessonRepository;
     }
 
-
+    public List<LessonDto> findAllForLessonIdWithoutText(long id){
+        return lessonRepository.findAllForLessonIdWithoutText(id);
+    }
 
 
     public List<Lesson> findAll() {
