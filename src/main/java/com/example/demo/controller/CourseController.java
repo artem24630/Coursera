@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.CourseRepository;
 import com.example.demo.domain.Course;
-import com.example.demo.service.CourseLister;
-import com.example.demo.service.StatisticsCounter;
+import com.example.demo.dto.LessonDto;
+import com.example.demo.service.CourseDatabaseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -13,29 +12,32 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/course")
 public class CourseController {
-    private final CourseRepository courseRepository;
+    private final CourseDatabaseManager courseDatabaseManager;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
+    public CourseController(CourseDatabaseManager courseDatabaseManager) {
+        this.courseDatabaseManager = courseDatabaseManager;
     }
 
     @GetMapping
     public String courseTable(Model model, @RequestParam(name = "titlePrefix", required = false) String titlePrefix) {
-        model.addAttribute("courses", courseRepository.findByTitleWithPrefix(titlePrefix == null ? "" : titlePrefix));
+        model.addAttribute("courses", courseDatabaseManager.findByTitleLike(((titlePrefix == null) ? "" : titlePrefix) + "%"));
         model.addAttribute("activePage", "courses");
         return "course_table";
     }
 
     @GetMapping("/{id}")
     public String courseForm(Model model, @PathVariable("id") Long id) {
-        model.addAttribute("course", courseRepository.findById(id)
-                .orElseThrow(NotFoundException::new));
+        Course currentCourse = courseDatabaseManager.findById(id)
+                .orElseThrow(NotFoundException::new);
+        model.addAttribute("course", currentCourse);
+        model.addAttribute("lessons", currentCourse.getLessons().stream().map(l -> new LessonDto(l.getId(), l.getTitle(), l.getText(), l.getCourse().getId())).collect(Collectors.toList()));
         return "course_form";
     }
 
@@ -44,19 +46,20 @@ public class CourseController {
         if (bindingResult.hasErrors()) {
             return "course_form";
         }
-        courseRepository.save(course);
+        courseDatabaseManager.save(course);
         return "redirect:/course";
     }
 
     @GetMapping("/new")
     public String courseForm(Model model) {
         model.addAttribute("course", new Course());
+        model.addAttribute("lessons", Collections.emptyList());
         return "course_form";
     }
 
     @DeleteMapping("/{id}")
     public String deleteCourse(@PathVariable("id") Long id) {
-        courseRepository.delete(id);
+        courseDatabaseManager.delete(id);
         return "redirect:/course";
     }
 
