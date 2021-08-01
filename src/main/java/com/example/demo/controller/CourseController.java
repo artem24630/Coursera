@@ -2,9 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.Course;
 import com.example.demo.domain.User;
-import com.example.demo.service.CourseDatabaseManager;
-import com.example.demo.service.LessonDatabaseManager;
-import com.example.demo.service.UserDatabaseManager;
+import com.example.demo.service.CourseDatabaseInterface;
+import com.example.demo.service.LessonDatabaseInterface;
+import com.example.demo.service.UserDatabaseInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -18,14 +20,16 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/course")
 public class CourseController {
-    private final CourseDatabaseManager courseDatabaseManager;
-    private final UserDatabaseManager userDatabaseManager;
-    private final LessonDatabaseManager lessonDatabaseManager;
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
+    private final CourseDatabaseInterface courseDatabaseManager;
+    private final UserDatabaseInterface userDatabaseInterface;
+    private final LessonDatabaseInterface lessonDatabaseManager;
 
     @Autowired
-    public CourseController(CourseDatabaseManager courseDatabaseManager, UserDatabaseManager userDatabaseManager, LessonDatabaseManager lessonDatabaseManager) {
+    public CourseController(CourseDatabaseInterface courseDatabaseManager, UserDatabaseInterface userDatabaseManager, LessonDatabaseInterface lessonDatabaseManager) {
         this.courseDatabaseManager = courseDatabaseManager;
-        this.userDatabaseManager = userDatabaseManager;
+        this.userDatabaseInterface = userDatabaseManager;
         this.lessonDatabaseManager = lessonDatabaseManager;
     }
 
@@ -52,7 +56,7 @@ public class CourseController {
             return "course_form";
         }
         courseDatabaseManager.save(course);
-        userDatabaseManager.save(new User(course.getAuthor()));
+        userDatabaseInterface.save(new User(course.getAuthor()));
         return "redirect:/course";
     }
 
@@ -69,16 +73,16 @@ public class CourseController {
     }
 
     @GetMapping("/{id}/assign")
-    public String assignUserToCourse(Model model, @PathVariable("id") Long id){
+    public String assignUserToCourse(Model model, @PathVariable("id") Long id) {
         model.addAttribute("courseId", id);
-        model.addAttribute("users", userDatabaseManager.findAll());
+        model.addAttribute("users", userDatabaseInterface.findAll());
         return "course_assign";
     }
 
     @PostMapping("/{courseId}/assign")
     public String assignUserForCourse(@PathVariable("courseId") Long courseId,
-                                 @RequestParam("userId") Long id) {
-        User user = userDatabaseManager.findById(id).get();
+                                      @RequestParam("userId") Long id) {
+        User user = userDatabaseInterface.findById(id).get();
         Course course = courseDatabaseManager.findById(courseId).get();
         course.getUsers().add(user);
         user.getCourses().add(course);
@@ -88,8 +92,8 @@ public class CourseController {
 
     @DeleteMapping("/{courseId}/unassign")
     public String unassignUserFromCourse(@PathVariable("courseId") Long courseId,
-                                         @RequestParam("userId") Long userId){
-        User user = userDatabaseManager.findById(userId).orElseThrow(NotFoundException::new);
+                                         @RequestParam("userId") Long userId) {
+        User user = userDatabaseInterface.findById(userId).orElseThrow(NotFoundException::new);
         Course course = courseDatabaseManager.findById(courseId)
                 .orElseThrow(NotFoundException::new);
         user.getCourses().remove(course);

@@ -1,7 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dao.CourseRepository;
 import com.example.demo.domain.Course;
+import com.example.demo.service.CourseDatabaseInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CourseDatabaseManager
-{
+public class CourseDatabaseManager implements CourseDatabaseInterface {
 
     private final CourseRepository courseRepository;
 
@@ -36,7 +36,7 @@ public class CourseDatabaseManager
         courseRepository.deleteById(id);
     }
 
-    public Course getOne(long id){
+    public Course getOne(long id) {
         return courseRepository.getOne(id);
     }
 

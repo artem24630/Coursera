@@ -26,6 +26,7 @@ public class Lesson {
     @NotBlank(message = "Text of the lesson has to be filled")
     private String text;
 
-    @ManyToOne(optional = false)// optional=false не должно быть возможности добавить урок, который не относится ни к одному из курсов.
+    @ManyToOne(optional = false)
+// optional=false не должно быть возможности добавить урок, который не относится ни к одному из курсов.
     private Course course;
 }

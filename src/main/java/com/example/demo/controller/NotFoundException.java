@@ -1,5 +1,5 @@
 package com.example.demo.controller;
 
-public class NotFoundException extends RuntimeException{
+public class NotFoundException extends RuntimeException {
 
 }

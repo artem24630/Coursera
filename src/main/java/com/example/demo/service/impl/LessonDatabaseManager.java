@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dao.LessonRepository;
 import com.example.demo.domain.Course;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class LessonDatabaseManager {
+public class LessonDatabaseManager implements com.example.demo.service.LessonDatabaseInterface {
     private final LessonRepository lessonRepository;
 
     @Autowired
@@ -22,23 +22,28 @@ public class LessonDatabaseManager {
         this.lessonRepository = lessonRepository;
     }
 
-    public List<LessonDto> findAllForLessonIdWithoutText(long id){
+    @Override
+    public List<LessonDto> findAllForLessonIdWithoutText(long id) {
         return lessonRepository.findAllForLessonIdWithoutText(id);
     }
 
 
+    @Override
     public List<Lesson> findAll() {
         return lessonRepository.findAll();
     }
 
+    @Override
     public Optional<Lesson> findById(long id) {
         return lessonRepository.findById(id);
     }
 
+    @Override
     public void save(Lesson lesson) {
         lessonRepository.save(lesson);
     }
 
+    @Override
     public void save(LessonDto lessonDto) {
         Course course = courseDatabaseManager.findById(lessonDto.getCourseId()).get();
         Lesson lesson = new Lesson(
@@ -50,10 +55,12 @@ public class LessonDatabaseManager {
         lessonRepository.save(lesson);
     }
 
+    @Override
     public void delete(long id) {
         lessonRepository.deleteById(id);
     }
 
+    @Override
     public List<Lesson> findByTitleLike(String title) {
         return lessonRepository.findByTitleLike(title);
     }

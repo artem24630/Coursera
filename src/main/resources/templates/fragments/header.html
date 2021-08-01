@@ -1,13 +1,20 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <header th:fragment="header">
-            <span th:classappend="${activePage == 'courses'} ? active">
-                <a th:href="@{/course}">Courses</a>
-            </span>
-  <span th:classappend="${activePage == 'users'} ? active">
-                <a th:href="@{/user}">User</a>
-            </span>
+    <span th:classappend="${activePage == 'courses'} ? active">
+        <a th:href="@{/course}">Courses</a>
+    </span>
+    <span th:classappend="${activePage == 'users'} ? active">
+                <a th:href="@{/users}">User</a>
+    </span>
+
+    <form class="float-right" th:method="post" th:action="@{/logout}">
+        <button>
+            Logout <span sec:authentication="principal.username">Username</span>
+        </button>
+    </form>
 </header>
 
 </html>

@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LessonDto;
-import com.example.demo.service.LessonDatabaseManager;
+import com.example.demo.service.LessonDatabaseInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +14,9 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/lesson")
 public class LessonController {
-    private final LessonDatabaseManager lessonDatabaseManager;
+    private final LessonDatabaseInterface lessonDatabaseManager;
 
-    public LessonController(LessonDatabaseManager lessonDatabaseManager) {
+    public LessonController(LessonDatabaseInterface lessonDatabaseManager) {
         this.lessonDatabaseManager = lessonDatabaseManager;
     }
 
@@ -38,7 +38,7 @@ public class LessonController {
     @GetMapping("/{id}")
     public String lessonForm(Model model, @PathVariable("id") Long id) {
         model.addAttribute("lesson", lessonDatabaseManager.findById(id)
-                .map(l ->  new LessonDto(l.getId(), l.getTitle(), l.getText(), l.getCourse().getId())).orElseThrow(NotFoundException::new));
+                .map(l -> new LessonDto(l.getId(), l.getTitle(), l.getText(), l.getCourse().getId())).orElseThrow(NotFoundException::new));
         return "lesson_form";
     }
 

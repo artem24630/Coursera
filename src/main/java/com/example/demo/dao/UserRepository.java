@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUsernameLike(String username);
+
     @Query("from User u " +
             "where u.id not in ( " +
             "select u.id " +

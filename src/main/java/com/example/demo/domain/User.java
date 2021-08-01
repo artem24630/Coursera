@@ -24,8 +24,21 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private Set<Course> courses;
 
-    public User(String username){
+    @ManyToMany
+    private Set<Role> roles;
+
+    public User(String username) {
         this.username = username;
+    }
+
+    @Column
+    private String password;
+
+    public User(Long id, String username, String encode, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = encode;
+        this.roles = roles;
     }
 
     @Override
